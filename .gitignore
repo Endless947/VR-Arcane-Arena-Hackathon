@@ -1,0 +1,61 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Uu]ser[Ss]ettings/
+
+# Unity asset meta files for folders
+/[Aa]ssets/[Aa]sset[Ss]tore-5.x/
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Crash reports
+sysinfo.txt
+crashlytics-build.properties
+
+# Android
+*.apk
+*.aab
+*.unitypackage
+
+# Builds
+/[Bb]uild/
+/[Bb]uilds/
+
+# Jetbrains Rider
+.idea/
+
+# Node / npm (if any tooling)
+node_modules/
+
+# Packages — don't ignore, Unity needs these tracked
+!/[Pp]ackages/manifest.json
+!/[Pp]ackages/packages-lock.json
