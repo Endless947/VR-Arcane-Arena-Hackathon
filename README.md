@@ -2,111 +2,98 @@
 
 > **See the Algorithms. Feel the Magic.**
 
-A Meta Quest VR magic combat game where every mechanic is powered by a real advanced data structure — and you can *see* them running live in 3D space around you.
+A VR magic combat game for Meta Quest 2 where every game mechanic is powered by a real advanced data structure from CS2308: Data Structures-II. The player stands in a circular arena, survives waves of enemies, and casts spells by inputting gesture token sequences on the controller — while watching all four data structures execute visually in 3D space in real time.
+
+Built solo by Team Threshold for **Tesseract '26, Open Innovation Track, SIG Reality Spectra, VIT Pune** — April 4-5, 2026 (24-hour offline hackathon).
 
 ---
 
-## What Is This?
+## What Makes This Different
 
-VR Arcane Arena is an immersive virtual reality game built for Meta Quest. You stand in a glowing arena, cast spells with real hand gestures, and survive waves of incoming enemies. Every major system is driven by a well-studied algorithm, visualised as world-space overlays and a screen-space HUD.
+Most game projects use data structures invisibly in the background. VR Arcane Arena makes them the spectacle.
 
-Built for:
-- 🏆 **Tesseract '26 Hackathon** — Open Innovation Track — SIG Reality Spectra, VIT Pune
----
-
-## The Four Data Structures
-
-| Game Mechanic | Data Structure | Complexity Highlight |
-|---|---|---|
-| 3D arena spatial partitioning + AoE hit detection | **Octree** | O(log n + k) sphere queries |
-| Spell casting via hand gesture sequences | **Trie** | O(L) spell recognition |
-| Enemy threat scoring + auto-targeting | **Fibonacci Heap** | O(1) amortized decrease-key |
-| Spell cooldown queue management | **Skip List** | O(log n) expected insert; O(1) peek-min |
+| What you see | What's running |
+|---|---|
+| Purple wireframe boxes around enemies | Octree subdividing in real time |
+| Gold path lighting up on the Trie panel as you press buttons | Trie prefix traversal live |
+| White ring under the Boss, gradient rings under others | Fibonacci Heap max-priority ordering |
+| Colored bars draining on the right panel after casting | Skip List sorted by expiry timestamp |
 
 ---
 
-## Features
+## Four Data Structures
 
-### 🌐 Arena Spatial Management (Octree)
-The arena is divided into a dynamic 3D Octree visible as runtime line-overlay boxes in the game world and headset view. As enemies cluster together, nodes subdivide into 8 children in real time. When enemies spread out or die, nodes merge back. AoE spells use sphere queries against the Octree achieving O(log n + k) performance instead of O(n) brute force.
-
-### 🔮 Gesture-Based Spell Casting (Trie)
-Make real hand signs in VR to chain spell sequences. A Trie resolves your gesture sequence to the correct spell in O(L) time. A floating world-space panel shows the Trie as a live node graph — nodes labelled with gesture names (ROOT / Fist / Point / Open / Spread), lighting up gold on the active path, white on reachable nodes, grey on dead ends. Spell names are shown in gold below terminal nodes.
-
-### 🎯 Fibonacci Heap Auto-Targeting
-Every frame, enemy threat scores update via O(1) amortized decrease-key operations. The Fibonacci Heap always knows the highest threat enemy. Projectile-based offensive spells target that enemy. Threat rings show heap priority — white ring = highest threat (Boss), red → orange → yellow → green → blue for lower ranks. When the Boss dies the heap recalculates and the nearest Archer becomes the new target.
-
-### ⏱️ Spell Cooldown System (Skip List)
-After casting, spells enter a Skip List ordered by expiry time. O(1) peek always shows which spell refreshes next. A floating world-space strip displays colour-coded progress bars draining and refilling per spell.
-
-### 🏟️ Wave System + Game States
-Survive 5 waves of enemies. The first wave starts after a 15-second delay. Wave 1 spawns 10 enemies, and each later wave adds 5 more enemies than the last. Score points per kill and per wave cleared. The HUD shows current wave, score, and player health bar. Game Over and You Win screens appear on completion.
-
----
-
-## Spell List
-
-| Gesture Sequence | Tokens | Spell | Effect |
+| Data Structure | Game Mechanic | Syllabus Unit | Complexity |
 |---|---|---|---|
-| Fist → Point | F → P | Fireball | Tracking projectile to highest threat enemy |
-| Open → Open → Spread | O → O → S | Blizzard | AoE damage radius 8, projectile to target |
-| Point → Point → Fist | P → P → F | Lightning Bolt | Hits 3 enemies, projectile to target |
-| Spread → Open | S → O | Arcane Shield | Absorbs next hits |
-| Fist → Fist → Fist | F → F → F | Meteor Strike | Massive AoE radius 12, projectile to target |
-| Open → Point → Spread | O → P → S | Gravity Well | Pulls all enemies toward player |
-| Point → Open | P → O | Frost Nova | AoE damage radius 6, projectile to target |
-| Spread → Fist → Fist | S → F → F | Void Blast | Massive damage radius 20, projectile to target |
+| **Octree** | 3D arena spatial partitioning + AoE spell hit detection | Unit 5 | O(log n + k) sphere queries |
+| **Trie / DAWG** | Spell casting via controller token sequences | Unit 3 | O(L) spell recognition |
+| **Fibonacci Heap** | Enemy threat scoring + auto-prioritization + targeting | Unit 2 | O(1) amortized decrease-key |
+| **Skip List** | Spell cooldown queue management | Unit 4 | O(log n) insertion |
+
+---
+
+## Spell System
+
+Controller buttons map to Trie tokens. Press tokens in sequence — the Trie panel lights up the active path. Complete a sequence and the spell fires automatically.
+
+| Button | Token | Gesture Name |
+|---|---|---|
+| A (right) | F | Fist |
+| B (right) | P | Point |
+| X (left) | O | Open Palm |
+| Y (left) | S | Spread |
+
+### Spell List
+
+| Sequence | Tokens | Spell | Effect | Cooldown |
+|---|---|---|---|---|
+| Fist → Point | FP | Fireball | Tracking projectile → highest threat enemy | 3s |
+| Open → Open → Spread | OOS | Blizzard | AoE damage radius 8f | 8s |
+| Point → Point → Fist | PPF | Lightning Bolt | Chain hits 3 enemies | 5s |
+| Spread → Open | SO | Arcane Shield | Absorbs next 3 hits | 10s |
+| Fist × 3 | FFF | Meteor Strike | Massive AoE radius 12f | 20s |
+| Open → Point → Spread | OPS | Gravity Well | Pulls enemies radius 15f | 12s |
+| Point → Open | PO | Frost Nova | AoE damage radius 6f | 6s |
+| Spread → Fist × 2 | SFF | Void Blast | Massive damage radius 20f | 15s |
 
 ---
 
 ## Enemy Types
 
-| Type | Speed | Damage | Health | Base Threat |
-|---|---|---|---|---|
-| Goblin | 0.8 | 5 | 50 | 1 |
-| Goblin Archer | 1.0 | 15 | 100 | 10 |
-| Goblin Boss | 0.6 | 50 | 150 | 100 |
+| Type | Speed | Damage | Health | Threat | Color |
+|---|---|---|---|---|---|
+| Goblin | 0.8 | 5 | 50 | 1 | Red sphere |
+| GoblinArcher | 1.0 | 15 | 100 | 10 | Orange sphere |
+| GoblinBoss | 0.6 | 50 | 150 | 100 | Dark purple sphere |
+
+Spawn formation: Boss at back center → 2 Archers flanking → Goblins spread in front. All enemies drop from Y=12 and march after a 2.5s pause. Formation always faces the player.
 
 ---
 
-## Debug Overlay System
+## Wave System
 
-Every data-structure-driven system is visible during gameplay:
-
-- **Runtime line-overlay boxes** — Octree nodes subdividing in real time as enemies cluster
-- **Floating world-space panel** — Trie node graph with gesture labels, gold active path, white reachable nodes, and gold spell names at terminal nodes
-- **Threat rings** — Fibonacci Heap priority shown as colour rings under every enemy
-- **Floating world-space strip** — Skip List cooldown bars draining and refilling per spell
-- **Screen-space HUD** — Current wave, score, health, Game Over, and You Win state
-
----
-
-## Keyboard Controls (Editor Testing)
-
-| Key | Spell |
-|---|---|
-| Space | Fireball |
-| 1 | Blizzard |
-| 2 | Lightning Bolt |
-| 3 | Arcane Shield |
-| 4 | Meteor Strike |
-| 5 | Gravity Well |
-| 6 | Frost Nova |
-| 7 | Void Blast |
+- 5 waves total
+- First wave spawns after **5 seconds**
+- Subsequent waves: 15 seconds between waves
+- Enemy count: `10 + (wave - 1) × 5` → Wave 1=10, Wave 2=15 ... Wave 5=30
 
 ---
 
 ## Tech Stack
 
-| Category | Tool |
+| Field | Value |
 |---|---|
-| Game Engine | Unity 2022.3 LTS |
-| VR SDK | Meta XR Core SDK + Interaction SDK |
+| Engine | Unity 2022.3 LTS |
 | Language | C# |
-| Target Hardware | Meta Quest 2 / 3 |
-| DS Visualisation | LineRenderer + uGUI (world-space and screen-space canvases) |
-| Dev Testing | Meta XR Simulator (no headset needed) |
-| Version Control | Git + GitHub |
+| Platform | Meta Quest 2 |
+| XR Plugin | OpenXR |
+| XR Template | VR Core (XR Interaction Toolkit) |
+| Hand Package | com.unity.xr.hands |
+| Scripting Backend | IL2CPP |
+| Target Architecture | ARM64 |
+| Min API | 29 / Target API 34 |
+| Input Handling | Both (legacy + new Input System) |
+| Tracking Origin | Floor |
 
 ---
 
@@ -115,26 +102,26 @@ Every data-structure-driven system is visible during gameplay:
 ```
 Assets/
 ├── Scripts/
-│   ├── DataStructures/        # Pure C# DS implementations
+│   ├── DataStructures/       ← Pure C#, zero Unity dependency
 │   │   ├── Octree.cs
 │   │   ├── SpellTrie.cs
 │   │   ├── FibonacciHeap.cs
 │   │   └── CooldownSkipList.cs
-│   ├── Managers/              # Unity MonoBehaviour wrappers
+│   ├── Managers/
 │   │   ├── OctreeManager.cs
 │   │   ├── ThreatManager.cs
 │   │   ├── CooldownTracker.cs
 │   │   └── GestureDetector.cs
-│   ├── Game/                  # Game logic
-│   │   ├── Enemy.cs
+│   ├── Game/
 │   │   ├── EnemyStats.cs
+│   │   ├── Enemy.cs
 │   │   ├── EnemySpawner.cs
 │   │   ├── SpellController.cs
 │   │   ├── SpellEffects.cs
 │   │   ├── SpellProjectile.cs
 │   │   ├── PlayerHealth.cs
 │   │   └── GameManager.cs
-│   └── UI/                    # Wrist UI panels + HUD
+│   └── UI/
 │       ├── TrieVisualizer.cs
 │       ├── CooldownStripUI.cs
 │       └── GameHUD.cs
@@ -147,99 +134,102 @@ Assets/
 └── Materials/
 ```
 
+The `DataStructures/` folder is completely independent of Unity — pure C# classes that can be unit tested without any engine dependency.
+
 ---
 
-## Data Structure Complexity Reference
+## Setup & Build
 
-### Octree
-```
-Insert:        O(log n) average
-Remove:        O(log n) average
-Update:        O(log n) average
-Sphere Query:  O(log n + k)   k = results returned
-Space:         O(n)
-```
+### Requirements
+- Unity 2022.3 LTS
+- Meta Quest 2 with Developer Mode enabled
+- Unity Package: `com.unity.xr.hands`
+- Unity Package: `XR Interaction Toolkit 3.x`
 
-### Trie
-```
-Insert spell:      O(L)   L = gesture sequence length
-Lookup/Traverse:   O(L)
-Autocomplete:      O(S)   S = reachable spells
-```
+### Steps
 
-### Fibonacci Heap
-```
-Insert:        O(1) amortized
-Find-Max:      O(1)
-Increase-Key:  O(1) amortized
-Extract-Max:   O(log n) amortized
-```
+1. Clone the repo and open in Unity 2022.3 LTS
+2. Install packages via Package Manager:
+   - `com.unity.xr.hands`
+   - Confirm XR Interaction Toolkit is present
+3. Edit → Project Settings → XR Plug-in Management → Android tab:
+   - Tick `OpenXR`
+   - Under OpenXR → Interaction Profiles: add `Oculus Touch Controller Profile` and `Meta Hand Tracking Aim Profile`
+   - Under Features: tick `Hand Tracking Subsystem` and `Meta Quest Support`
+4. Edit → Project Settings → Player → Other Settings → Active Input Handling → `Both`
+5. File → Build Settings → switch platform to Android → add `ArenaScene`
+6. Connect Quest 2 via USB → Build and Run
 
-### Skip List
-```
-Insert:     O(log n) expected
-Peek-Min:   O(1)
-Space:      O(n log n) expected
-```
+### First Run on Headset
+- App will be in **App Library → Unknown Sources**
+- Accept hand tracking / controller prompt
+- First wave spawns after 5 seconds
+
+---
+
+## How to Play
+
+1. Look around the arena — purple wireframe boxes are the Octree visualizing spatial partitioning
+2. Enemies spawn in formation and march toward you
+3. Check the **right panel** — white ring under an enemy means the Fibonacci Heap has it as highest threat. Fireball always targets it first.
+4. Cast spells by pressing controller buttons as token sequences:
+   - Press **A** then **B** → `F` then `P` → **Fireball** fires at the Boss
+   - Watch the **left Trie panel** light up gold as each token registers
+5. After casting, watch the **right cooldown panel** — bars drain during cooldown, dim when ready (Skip List)
+6. Survive all 5 waves to win
+
+---
+
+## Debug Overlays
+
+All four data structures are visible during gameplay:
+
+- **Octree** — Purple wireframe boxes in world space. Brighter = more enemies in node. White = at capacity.
+- **Trie** — Node graph on bottom-left of view. Gold = active traversal path. White = reachable next tokens. Grey = unreachable. Red flash = invalid sequence.
+- **Fibonacci Heap** — Threat rings under every enemy. White ring = current highest threat target. Red → orange → yellow → green → blue gradient for lower threats.
+- **Skip List** — Colored progress bars bottom-right. Each bar drains during cooldown. Dims when spell is ready again.
 
 ---
 
 ## Design Decisions
 
-**Why Fibonacci Heap over Binary Heap?**
-Binary Heap requires O(log n) decrease-key. With enemies updating threat scores every frame at 72 FPS, Fibonacci Heap's O(1) amortized decrease-key makes per-frame updates tractable.
+**Fibonacci Heap over Binary Heap** — O(1) amortized decrease-key vs O(log n). At 100 enemies × 72 FPS = 7,200 priority updates/sec, the difference is significant.
 
-**Why Octree over KD-Tree?**
-KD-Trees require O(n log n) reconstruction after dynamic updates. Enemies move every frame making KD-Tree rebuilding impractical. Octrees support O(log n) dynamic insertion and deletion natively.
+**Octree over KD-Tree** — KD-Tree requires O(n log n) full rebuild every frame for moving enemies. Octree handles dynamic insert/delete in O(log n) per enemy.
 
-**Why Skip List over sorted array?**
-Sorted array requires O(n) insertion due to element shifting. Skip List achieves O(log n) insertion while maintaining O(1) peek at minimum — directly demonstrates Unit 4 randomized DS requirements.
+**Skip List over sorted array** — O(log n) insertion vs O(n) shifting. O(1) peek at the next expiring cooldown.
 
-**Why Unlit/Color shader on prefabs?**
-Runtime material.color changes require Unlit shader. Standard shader ignores runtime color changes.
+**Trie over HashMap** — HashMap requires exact key match. Trie gives prefix traversal and live autocomplete so the visualizer can show reachable spells as each token is entered, not just the final result.
 
----
+**OpenXR over Oculus XR Plugin** — The Oculus plugin caused a frozen state on the headset (scripts hanging on OVRInput calls that never initialized). OpenXR with XR Interaction Toolkit is the correct stable path for Quest 2 in 2025-26.
 
-## Development Setup
+**Controller buttons as Trie tokens** — Hand tracking requires specific OpenXR conditions. In a 24-hour hackathon demo, controllers are 100% reliable. Buttons A/B/X/Y map directly to tokens F/P/O/S — the Trie traversal, prefix matching, and visualizer all function identically to hand gestures.
 
-### Requirements
-- Unity 2022.3 LTS with Android Build Support + Android SDK/NDK
-- Meta XR Core SDK (Unity Asset Store)
-- Meta XR Interaction SDK (Unity Asset Store)
-- Android API Level 34, IL2CPP, ARM64
-
-### Running in Editor
-1. Clone repo
-2. Open in Unity Hub → Add project from disk
-3. Open `Assets/Scenes/ArenaScene.unity`
-4. Hit Play — click Game window to focus, use keyboard shortcuts to cast spells
-
-### Deploying to Meta Quest
-1. Enable Developer Mode on Quest (Settings → Developer Mode)
-2. Connect via USB-C
-3. File → Build Settings → Android → Build and Run
+**Unlit/Color shader only** — Legacy particle shaders get stripped from the Android APK build. Unlit/Color is always included by Unity in every build.
 
 ---
 
-## Demo Script (5 Minutes)
+## Academic Context
 
-1. **(0:30)** Hand headset to judge. Let them look around the arena.
-2. **(1:00)** Wave spawns. Point out formation — Boss at back, archers flanking, goblins in front.
-3. **(1:00)** Point at the runtime line overlay. *"Every box is an Octree node. Watch them subdivide as enemies cluster — O(log n + k) AoE queries instead of O(n) brute force."*
-4. **(1:00)** Show the floating Trie panel. *"Each hand sign traverses this prefix tree. O(L) spell recognition regardless of how many spells exist. Follow the gold path and read the terminal spell names."*
-5. **(0:30)** Point at white ring enemy. *"Fibonacci Heap maximum — highest threat, O(1) to find. Watch the ring change when the Boss dies."*
-6. **(0:30)** Show the floating cooldown strip. *"Skip List sorted by expiry time. O(1) peek at which spell refreshes next."*
-7. **(0:30)** Open Q&A.
+| Field | Details |
+|---|---|
+| Course | CS2308 Data Structures-II, VIT Pune |
+| Academic Year | 2025-26 |
+| Units Covered | Unit 2 (Heaps), Unit 3 (String DS), Unit 4 (Randomized DS), Unit 5 (Spatial DS) |
+| Reference Project | #16 — Building a 3D Game World Using Octrees |
+| Hackathon | Tesseract '26, Open Innovation Track |
+| Organizer | SIG Reality Spectra (VR/AR club), VIT Pune |
 
 ---
 
 ## References
 
 1. Sartaj Sahni, Dinesh P. Mehta — *Handbook of Data Structures and Applications*, 2nd Ed.
-2. T. Cormen et al. — *Introduction to Algorithms*, 2nd Ed., PHI
+2. T. Cormen, R. Rivest, C. Stein, C. Leiserson — *Introduction to Algorithms*, 2nd Ed., PHI
 3. Peter Brass — *Advanced Data Structures*, Cambridge University Press
 4. Meta XR SDK Documentation — developer.oculus.com
-5. Unity XR Interaction Toolkit — docs.unity3d.com
+5. Unity XR Interaction Toolkit Docs — docs.unity3d.com
+6. Unity XR Hands Package — com.unity.xr.hands
 
 ---
 
