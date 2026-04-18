@@ -36,7 +36,6 @@ desktop.ini
 *.mdb
 *.opendb
 *.VC.db
-*.vscode/
 
 # Crash reports
 sysinfo.txt
